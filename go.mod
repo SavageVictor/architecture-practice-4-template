@@ -1,4 +1,4 @@
-module github.com/roman-mazur/design-practice-2-template
+module github.com/SavageVictor/architecture-practice-4-template
 
 go 1.20
 

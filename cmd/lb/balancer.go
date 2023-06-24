@@ -7,11 +7,13 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 
-	"github.com/roman-mazur/design-practice-2-template/httptools"
-	"github.com/roman-mazur/design-practice-2-template/signal"
+	"github.com/SavageVictor/architecture-practice-4-template/httptools"
+	"github.com/SavageVictor/architecture-practice-4-template/signal"
 )
 
 type sizeTimestamp struct {
@@ -122,9 +124,14 @@ func forward(dst string, rw http.ResponseWriter, r *http.Request) error {
 				rw.Header().Add(k, value)
 			}
 		}
+
 		if *traceEnabled {
 			rw.Header().Set("lb-from", dst)
+			rw.Header().Set("data-size", strconv.Itoa(len(bodyBytes))) // Add data size to headers
+			servers := strings.Join(serversPool, ",")
+			rw.Header().Set("server-pool", servers)
 		}
+
 		log.Println("fwd", resp.StatusCode, resp.Request.URL)
 		rw.WriteHeader(resp.StatusCode)
 		_, err = rw.Write(bodyBytes) // Write the body bytes to the ResponseWriter
